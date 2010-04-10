@@ -29,6 +29,8 @@ class App_Application_Resource_Doctrine extends Zend_Application_Resource_Resour
 
         $manager = Doctrine_Manager::getInstance();
 
+        $manager->setAttribute('model_loading', 'conservative');
+
         // set models to be autoloaded and not included (Doctrine::MODEL_LOADING_AGGRESSIVE)
         $manager->setAttribute(
             Doctrine::ATTR_MODEL_LOADING,

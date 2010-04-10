@@ -23,7 +23,7 @@ class Doctrine_Task_GenerateModels extends Doctrine_Task_GenerateModelsDb
         $options = array(
             'pearStyle' => true,
             'generateTableClasses' => true,
-            'classPrefix' => 'Model_',
+            'classPrefix' => 'App_Model_',
             'baseClassPrefix' => 'Base_',
             'baseClassesDirectory' => null,
             'classPrefixFiles' => false,
@@ -31,7 +31,6 @@ class Doctrine_Task_GenerateModels extends Doctrine_Task_GenerateModelsDb
         );
         
         $options += $this->getArguments();
-	
         $import = new Doctrine_Import(Doctrine_Manager::connection());
         $import->importSchema($models, (array) $this->getArgument('connection'), $options);
 

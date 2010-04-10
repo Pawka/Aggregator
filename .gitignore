@@ -1,2 +1,5 @@
 *.ini
 *.bak
+nbproject
+library/Zend/
+tags
