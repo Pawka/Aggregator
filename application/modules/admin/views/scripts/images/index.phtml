@@ -1,0 +1,35 @@
+<h2>Nuotraukų sąrašas</h2><br />
+
+
+<div class="tablenav">
+    <div>
+        Puslapis: <?= $this->paginator; ?>
+
+        <a href="images/create/parent/<?=$this->params['parent']?>/">Pridėti</a>
+    </div>
+</div>
+<br class="clear" />
+<table class="widefat">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Filename</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if (count($this->paginator)): ?>
+        <?php foreach ($this->paginator as $item): ?>
+        <tr>
+            <td>#<?= $this->escape($item['id']) ?></td>
+            <td><?=$this->thumb("auto/{$item['auto_id']}/{$item['image']}", 80, 60, false); ?></td>
+            <td><?= $this->escape($item['image']) ?></td>
+            <td>
+                <a href="images/delete/id/<?=$item['id']?>/parent/<?=$this->params['parent']?>/">delete</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+    </tbody>
+</table>

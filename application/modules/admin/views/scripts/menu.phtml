@@ -1,0 +1,22 @@
+<ul id="adminmenu">
+    <li><a href="">Pagrindinis</a></li>
+    <li><a href="cars/">Automobiliai</a></li>
+    <li><a href="makers/">Gamintojai</a></li>
+    <li><a href="colors/">Spalvos</a></li>
+</ul>
+
+<ul id="submenu">
+    <?php if ($this->params['controller'] == "cars"): ?>
+    <li><a href="<?= $this->params['controller'] ?>/">Sąrašas</a></li>
+    <li><a href="<?= $this->params['controller'] ?>/create/">Sukurti</a></li>
+    <?php if ($this->params['action'] == 'edit') : ?>
+    <li><a href="images/index/parent/<?=$this->params['id']?>/">Paveiksliukai</a></li>
+    <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if ($this->params['controller'] == "makers"): ?>
+    <li><a href="<?= $this->params['controller'] ?>/">Sąrašas</a></li>
+    <li><a href="<?= $this->params['controller'] ?>/create/">Sukurti</a></li>
+    <?php endif; ?>
+
+</ul>    

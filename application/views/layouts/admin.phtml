@@ -1,0 +1,27 @@
+<?= $this->doctype() ?>
+<html>
+    <head>
+        <base href="<?= $this->baseUrl() ?>/" />
+        <?= $this->headTitle() ?>
+        <?= $this->headMeta() ?>
+        <?= $this->headLink() ?>
+        <?= $this->headScript() ?>
+        <?= $this->headStyle() ?>
+
+    </head>
+    <body>
+        <div id="userinfo">
+
+        </div>
+
+        <div id="head"></div>
+        <?= $this->render("menu.phtml")?>
+
+        <div id="body">
+            <div class="wrap">
+                <?=$this->layout()->content;?>
+            </div>
+        </div>
+
+    </body>
+</html>

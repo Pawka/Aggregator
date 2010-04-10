@@ -1,0 +1,15 @@
+<?= $this->doctype() ?>
+<html>
+    <head>
+        <?= $this->headTitle() ?>
+        <?= $this->headMeta() ?>
+        <?= $this->headLink() ?>
+        <?= $this->headScript() ?>
+        <?= $this->headStyle() ?>
+        <base href="/" />
+    </head>
+    <body>
+        <h1>Site</h1>
+        <?= $this->layout()->content; ?>
+    </body>
+</html>

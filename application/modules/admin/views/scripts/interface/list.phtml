@@ -1,0 +1,40 @@
+<br class="clear" />
+<table class="widefat">
+    <thead>
+        <tr>
+            <?php foreach ($this->cols as $key => $row) : ?>
+            <th>
+                <a href="<?=$this->url(array('by' => $key, 'order' => ($key == $this->by) ? ($this->order == 'asc') ? 'desc' : 'asc' : 'asc'));?>">
+                    <?= $this->escape($row); ?>
+                </a>
+            </th>
+            <?php endforeach; ?>
+            <th>Veiksmai</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if (count($this->paginator)):
+            foreach ($this->paginator as $item): ?>
+        <tr onclick="window.location='<?=$this->controllerUrl . 'edit/' . $item->id . '/'?>';">
+            <?php foreach ($this->cols as $key => $row): ?>
+            <td><?=$this->escape($item->$key)?></td>
+            <?php endforeach; ?>
+            <td class="tc" width="50">
+                <a href="<?=$this->controllerUrl . 'delete/' . $item->id . '/'?>">
+                    <img src="../images/admin/icons/delete.png" alt="Šalinti" />
+                </a>
+            </td>
+        </tr>
+        <?php
+            endforeach;
+        endif;
+        ?>
+    </tbody>
+</table>
+<div class="tablenav">
+    <div>
+        <?= $this->paginator; ?>
+    </div>
+</div>
+

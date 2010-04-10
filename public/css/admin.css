@@ -1,0 +1,470 @@
+* {
+    padding: 0pt;
+    margin: 0pt;
+}
+
+html, body {
+    height:100%;
+    color: #333;
+}
+
+img {
+    border: none;
+}
+
+
+
+/* PAGINATOR */
+.paginationControl {
+    text-align: right;
+}
+
+.paginationControl a, .paginationControl span.disabled {
+    background-color:#FFFFFF;
+    border:1px solid #CCCCCC;
+    padding:3px;
+    text-align:center;
+    text-decoration:none;
+    margin: 2px;
+}
+
+.paginationControl span.disabled {
+    font-weight: bold;
+    background-color: #DDD;
+}
+
+html, td {
+    -x-system-font:none;
+    font-family:"Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana,sans-serif;
+    font-size:13px;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+    line-height:normal;
+}
+
+
+p, li, dl, dd, dt {
+    line-height:140%;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.clear {
+    clear: both;
+    line-height: 0px;
+}
+
+#head  {
+    border-top-color:#464646;
+    background-color:#E4F2FD;
+    border-top-style:solid;
+    border-top-width:30px;
+}
+
+#userinfo {
+    font-size:11px;
+    position:absolute;
+    right:15px;
+    top:9px;
+    color: #999;
+}
+
+#userinfo a {
+    color: #CCC;
+}
+
+#userinfo a:hover {
+    color: #EEE;
+}
+
+#adminmenu {
+    background-color:#E4F2FD;
+    border-bottom-color:#C6D9E9;
+    border-bottom-style:solid;
+    border-bottom-width:1px;
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin:0pt;
+    padding-left:11px;
+}
+
+#dashmenu li, #adminmenu li, #submenu li, #sidemenu li {
+    display:inline;
+    line-height:200%;
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin:0pt;
+    padding:0pt;
+    text-align:center;
+    white-space:nowrap;
+}
+
+#adminmenu a, #submenu a, #poststuff #edButtonPreview, #poststuff #edButtonHTML, #the-comment-list p.comment-author strong a, #media-upload a.del-link, #media-upload a.delete, .ui-tabs-nav a, a {
+    color:#2583AD;
+}
+#adminmenu a {
+    font-size:16px;
+    line-height:30px;
+    padding:5px 7px;
+}
+
+#submenu {
+    padding:6px 0pt 3px;
+    margin: 0px;
+}
+
+#submenu li {
+    font-size:14px;
+    padding:0pt 0pt 8px 17px;
+}
+
+#wphead a, #dashmenu a, #adminmenu a, #submenu a, #sidemenu a, #taglist a, #catlist a {
+    text-decoration:none;
+}
+#adminmenu a, #submenu a, a {
+    color:#2583AD;
+}
+
+#adminmenu a:hover, #submenu a:hover, a:hover, #adminmenu a.active, #submenu a.active {
+    color:#D54E21;
+}
+
+.wrap, .updated, .error {
+    margin:0pt 15px;
+    padding:0pt;
+}
+
+
+h2 {
+    display:block;
+    font-size:1.5em;
+    font-weight:bold;
+    margin:0.83em 0pt;
+}
+
+.wrap h2 {
+    border-bottom-color:#DADADA;
+    color:#666666;
+    -x-system-font:none;
+    border-bottom-style:solid;
+    border-bottom-width:1px;
+    clear:both;
+    font-family:Georgia,"Times New Roman",Times,serif;
+    font-size:24px;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+    line-height:normal;
+    margin:5px 0pt 3pt -4px;
+    padding:0pt 280px 7px 0pt;
+}
+
+
+.widefat {
+    border-width: 1px;
+    border-style: solid;
+    border-collapse: collapse;
+    width: 100%;
+    clear: both;
+    margin: 0;
+}
+
+.widefat a {
+    text-decoration: none;
+}
+
+.widefat abbr {
+    white-space: nowrap;
+}
+
+.widefat td, .widefat th {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #ccc;
+    font-size: 11px;
+    vertical-align: text-top;
+}
+
+.widefat td {
+    padding: 5px 10px;
+    vertical-align: top;
+}
+
+.widefat tr {
+    cursor: pointer;
+}
+
+.widefat tr.highlight {
+    background-color: #EAF3FA;
+}
+
+.widefat th {
+    padding: 9px 15px 6px 10px;
+    text-align: center;
+    line-height: 1.3em;
+}
+
+.widefat th input {
+    margin: 0 0 0 8px;
+    padding: 0;
+}
+
+.widefat .check-column {
+    text-align: right;
+    width: 1.5em;
+    padding: 0;
+
+}
+
+.widefat tbody th.check-column {
+    padding: 8px 0 22px;
+}
+/*
+th.check-column + th, th.check-column + td {
+	padding-left: 5px;
+}
+*/
+.widefat .num {
+    text-align: center;
+}
+
+.widefat thead, .thead {
+    background-color:#464646;
+    color:#D7D7D7;
+}
+
+textarea, input, select {
+    font: 13px Verdana, Arial, Helvetica, sans-serif;
+    margin: 1px;
+    padding: 3px;
+}
+
+#login {
+    margin: 7em auto;
+    width: 300px;
+}
+
+form {
+    margin-left: 8px;
+    padding: 16px 16px 40px 16px;
+    font-weight: bold;
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#login form {
+    background-color:#EAF3FA;
+}
+form .forgetmenot { font-weight: normal; float: left; margin-bottom: 0;}
+
+#login form .submit input {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif;
+    padding: 3px 5px;
+    border: none;
+    font-size: 13px;
+    border-width: 1px;
+    border-style: solid;
+    -moz-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    cursor: default;
+    text-decoration: none;
+    margin-top: -6px;
+}
+
+form .submit { float: right; }
+form p { margin-bottom: 24px; }
+
+#wphead h1, #dashmenu a.current:hover, #login form input {
+    color:#555555;
+}
+#user_pass, #user_login, #user_email {
+    font-size:20px;
+    margin-right:6px;
+    padding:3px;
+    width:97%;
+}
+
+.tablenav a.button-secondary {
+    display: block;
+    margin: 1px 8px 0 0;
+}
+
+.tablenav .button-secondary {
+    padding: 2px 4px;
+    vertical-align: top;
+}
+
+.tablenav .tablenav-pages a.next, .tablenav .tablenav-pages a.prev {
+    text-decoration: underline;
+}
+
+.tablenav {
+    padding: 10px;
+    clear: both;
+    margin-bottom: 4px;
+    margin-top: 8px;
+    vertical-align: text-top;
+    background-color:#EAF3FA;
+}
+
+.tablenav .tablenav-pages {
+    float: right;
+    height: 18px;
+    padding-top: 6px;
+    font-size: 11px;
+}
+
+.tablenav .tablenav-pages a {
+    text-decoration: none;
+}
+
+#body select {
+    font: 12px/20px "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana, sans-serif;
+    padding: 2px;
+
+    border-width: 1px;
+    border-style: solid;
+    height: 2em;
+    vertical-align:top;
+    background-color: #fff;
+    border-color: #DDD;
+}
+
+
+/* Tables used on comment.php and option/setting pages */
+
+.form-table {
+    border-collapse: collapse;
+    margin-top: 1em;
+    width: 100%;
+    margin-bottom: -8px;
+}
+
+.form-table td {
+    margin-bottom: 9px;
+    padding: 10px;
+    line-height: 20px;
+    border-bottom-width: 8px;
+    border-bottom-style: solid;
+    border-bottom-color: #FFF;
+    font-size: 11px;
+    background-color:#EAF3FA;
+}
+
+.form-table th {
+    vertical-align: top;
+    text-align: left;
+    padding: 10px;
+    width: 150px;
+    border-bottom-width: 8px;
+    border-bottom-style: solid;
+}
+
+.form-table th.th-full {
+    width: auto;
+}
+
+.form-table input, .form-table textarea {
+    border-width: 1px;
+    border-style: solid;
+}
+
+.form-table div.color-option {
+    display: block;
+    clear: both;
+}
+
+.form-table input.tog {
+    margin-top: 2px;
+    margin-right: 2px;
+    float: left;
+}
+
+.form-table input.field, .form-table select.field {
+    width: 400px;
+}
+
+.form-table table.color-palette {
+    vertical-align: bottom;
+    float: left;
+    margin: -3px 3px 8px;
+}
+
+.form-table .color-palette td {
+    border-bottom: none;
+    border: 1px solid #fff;
+    font-size: 1px;
+    line-height: 1px;
+}
+
+.form-table tr {
+    background-color:#EAF3FA;
+}
+
+.tar {
+    text-align: right;
+}
+
+.wrap form dl dt {
+    width: 200px;
+    float: left;
+    clear: both;
+    margin: 3px;
+    padding-top:5px;
+    padding-left: 2px;
+    border-top: 1px solid #EAF3FA;
+}
+
+.wrap form dl dd {
+    float: left;
+    margin: 3px;
+}
+
+.wrap form dl dd input, .wrap form dl dd select {
+    width: 200px;
+}
+
+
+.wrap form dl dd textarea {
+    width: 400px;
+    height: 80px;
+}
+
+#fieldset-options {
+    width: 800px;
+}
+
+#fieldset-options dt {
+    clear: none;
+    height:30px;
+    width:200px;
+    border-top: none;
+    padding-top: none;
+}
+
+#fieldset-options dl dd {
+    margin-right: 20px;
+}
+
+#metallic-label {
+    clear: none;
+    width: 100px;
+}

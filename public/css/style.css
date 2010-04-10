@@ -1,0 +1,10 @@
+/* 
+    Document   : style
+    Created on : Jul 26, 2009, 5:01:24 PM
+    Author     : pawka
+    Description:
+        Base stylesheet.
+*/
+
+body {font-family: Tahoma; font-size: 11px;}
+textarea {width: 500px; height: 300px}
