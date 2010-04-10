@@ -11,8 +11,9 @@
  * @property string $url
  * @property timestamp $create_date
  * @property timestamp $update_date
- * @property timestamp $feed_update
+ * @property timestamp $last_fetch_date
  * @property integer $active
+ * @property string $fetch_message
  * @property Doctrine_Collection $Posts
  * 
  * @package    Aggregator
@@ -65,7 +66,7 @@ abstract class App_Model_Base_Feeds extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('update_date', 'timestamp', null, array(
@@ -73,10 +74,10 @@ abstract class App_Model_Base_Feeds extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
-        $this->hasColumn('feed_update', 'timestamp', null, array(
+        $this->hasColumn('last_fetch_date', 'timestamp', null, array(
              'type' => 'timestamp',
              'fixed' => false,
              'unsigned' => false,
@@ -92,6 +93,15 @@ abstract class App_Model_Base_Feeds extends Doctrine_Record
              'primary' => false,
              'default' => '1',
              'notnull' => true,
+             'autoincrement' => false,
+             ));
+        $this->hasColumn('fetch_message', 'string', 255, array(
+             'type' => 'string',
+             'length' => 255,
+             'fixed' => false,
+             'unsigned' => false,
+             'primary' => false,
+             'notnull' => false,
              'autoincrement' => false,
              ));
     }
