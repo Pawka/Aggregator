@@ -4,10 +4,10 @@
  *
  * @author Povilas Balzaravičius <pavvka@gmail.com>
  */
-class Site_Feeds_Fetcher {
+class App_Feeds_Fetcher {
 
     /**
-     * @var Site_Model_FeedsTable
+     * @var App_Model_FeedsTable
      */
     private $table = null;
 
@@ -30,6 +30,7 @@ class Site_Feeds_Fetcher {
         foreach ($query->execute() as $row) {
             $content = $this->readFeed($row);
             if ($content !== null) {
+                $this->logger->info("Fetching feed: {$content['title']}");
                 $this->savePosts($row, $content['entries']);
             }
             $row->free();
@@ -123,7 +124,7 @@ class Site_Feeds_Fetcher {
             }
             $result = $data;
         }
-        catch (Zend_Feed_Exception $e) {
+        catch (Exception $e) {
             $feed->fetch_message = $e->getMessage();
         }
 

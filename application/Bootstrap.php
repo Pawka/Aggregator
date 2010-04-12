@@ -55,8 +55,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     protected function _initLogger() {
         $logger = new Zend_Log();
         $writer = new Zend_Log_Writer_Stream("php://output");
+        
+        $format = '%timestamp% %priorityName% (%priority%): %message% <br />' . PHP_EOL;
+        $formatter = new Zend_Log_Formatter_Simple($format);
+        $writer->setFormatter($formatter);
         $logger->addWriter($writer);
-
         Zend_Registry::set('logger', $logger);
     }
 
