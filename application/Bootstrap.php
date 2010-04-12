@@ -52,6 +52,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     }
 
 
+    protected function _initLogger() {
+        $logger = new Zend_Log();
+        $writer = new Zend_Log_Writer_Stream("php://output");
+        $logger->addWriter($writer);
+
+        Zend_Registry::set('logger', $logger);
+    }
+
+
     /**
      *
      */

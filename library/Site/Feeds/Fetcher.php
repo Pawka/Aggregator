@@ -11,8 +11,16 @@ class Site_Feeds_Fetcher {
      */
     private $table = null;
 
-    public function  __construct() {
+    /**
+     * logger 
+     * 
+     * @var Zend_Log
+     */
+    private $logger = null;
 
+    public function  __construct() {
+        $this->logger = Zend_Registry::get('logger');
+        set_time_limit(0);
     }
 
 
@@ -21,18 +29,61 @@ class Site_Feeds_Fetcher {
         $query->from('App_Model_Feeds')->where('active = 1');
         foreach ($query->execute() as $row) {
             $content = $this->readFeed($row);
-            $this->writePosts($row, $content);
+            if ($content !== null) {
+                $this->savePosts($row, $content['entries']);
+            }
+            $row->free();
         }
     }
 
 
-    protected function writePosts($feed_row, $posts) {
-        $links = $this->getFeedLinks($posts['entries']);
+    /**
+     * Saves posts fetched from RSS feed.
+     * @param App_Model_Feeds $feed_row
+     * @param array $posts
+     */
+    protected function savePosts($feed_row, $posts) {
+        if (empty($posts)) {
+            return null;
+        }
+
+        $links = Site_Tools_Array::getValues($posts, 'link');
+        $existingPosts = array();
+        if (!empty($links)) {
+            $q = Doctrine_Query::create()->select("*")->from('App_Model_Posts')
+                    ->whereIn('link', $links);
+            $existingPosts = $q->fetchArray();
+            $existingPosts = Site_Tools_Array::rewriteKeys($existingPosts, 'link');
+        }
+
+        foreach ($posts as $row) {
+            $post_id = isset($existingPosts[ $row['link'] ]) ? $existingPosts[ $row['link'] ]['id'] : null;
+            $row['feed_id'] = $feed_row->id;
+            $this->savePost($row, $post_id);
+        }
+
     }
 
 
-    protected function getFeedLinks($posts) {
+    protected function savePost($data, $post_id = null) {
+        $post = new App_Model_Posts();
         
+        if ($post_id !== null) {
+            $post->assignIdentifier($post_id);
+        }
+        else {
+            $post->create_date = new Doctrine_Expression('NOW()');
+        }
+
+        $post->fromArray($data);
+        $post->update_date = new Doctrine_Expression('NOW()');
+        try {
+            $post->save();
+        }
+        catch (Exception $e) {
+            $this->logger->err($e->getMessage());
+        }
+        $post->free();
     }
 
 

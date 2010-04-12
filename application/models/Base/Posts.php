@@ -8,7 +8,6 @@
  * @property integer $id
  * @property string $title
  * @property string $link
- * @property integer $feed_id
  * @property string $excerpt
  * @property string $body
  * @property string $body_cleared
@@ -16,6 +15,7 @@
  * @property timestamp $update_date
  * @property integer $rating_up
  * @property integer $rating_down
+ * @property integer $feed_id
  * @property App_Model_Feeds $Feeds
  * @property Doctrine_Collection $Wordlocation
  * 
@@ -55,21 +55,12 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'notnull' => true,
              'autoincrement' => false,
              ));
-        $this->hasColumn('feed_id', 'integer', 4, array(
-             'type' => 'integer',
-             'length' => 4,
-             'fixed' => false,
-             'unsigned' => false,
-             'primary' => false,
-             'notnull' => true,
-             'autoincrement' => false,
-             ));
         $this->hasColumn('excerpt', 'string', null, array(
              'type' => 'string',
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('body', 'string', null, array(
@@ -77,7 +68,7 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('body_cleared', 'string', null, array(
@@ -85,7 +76,7 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('create_date', 'timestamp', null, array(
@@ -121,6 +112,15 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'unsigned' => false,
              'primary' => false,
              'default' => '0',
+             'notnull' => true,
+             'autoincrement' => false,
+             ));
+        $this->hasColumn('feed_id', 'integer', 4, array(
+             'type' => 'integer',
+             'length' => 4,
+             'fixed' => false,
+             'unsigned' => false,
+             'primary' => false,
              'notnull' => true,
              'autoincrement' => false,
              ));

@@ -1,11 +1,11 @@
 <?php
 /**
- * ArrayTools
+ * ASite_Tools_Array
  *
  * @author Povilas Balzaravičius
- * @copyright Povilas Balzaravičius
+ * @copyright Povilas Balzaravičius, 2009
  */
-class Site_ArrayTools {
+class Site_Tools_Array {
 
 
 
@@ -41,13 +41,40 @@ class Site_ArrayTools {
      * @param string $key Field name
      * @return array Rewrited array
      */
-    public function rewriteKeys($array, $key) {
+    public static function rewriteKeys($array, $key) {
         $result = array();
 
         foreach ($array as $row) {
             $result[ $row[ $key ] ] = $row;
         }
 
+        return $result;
+    }
+
+
+
+
+    /**
+     * Returns values of given key from associative array.
+     * 
+     * @param array $array Array of source data.
+     * @param string $key Key which falues should be collected.
+     * @param boolean $unique If true, returns only ounique values.
+     * @return void
+     */
+    public static function getValues($array, $key, $unique = true) {
+        $result = null;
+        if (is_array($array)) {
+            foreach ($array as $row) {
+                if (isset($row[$key])) {
+                    $result[] = $row[$key];
+                }
+            }
+        }
+
+        if ($unique === true && !empty($result)) {
+            $result = array_unique($result);
+        }
         return $result;
     }
 
