@@ -20,7 +20,6 @@ class Site_Controller_Admin extends Site_Controller {
     public function prepareStyles() {
         $this->view->headLink()->setStylesheet('../css/framework.css');
         $this->view->headLink()->appendStylesheet('../css/admin.css');
-
     }
 
 

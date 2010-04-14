@@ -72,7 +72,10 @@ class Site_Controller extends Zend_Controller_Action {
      * Nustato loadinamus stilius.
      */
     public function prepareStyles() {
-
+        $this->view->headLink()
+            ->setStylesheet('css/framework.css');
+        $this->view->headLink()
+            ->appendStylesheet('css/style.css');
     }
 
 

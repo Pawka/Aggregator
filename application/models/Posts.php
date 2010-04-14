@@ -12,5 +12,7 @@
  */
 class App_Model_Posts extends App_Model_Base_Posts
 {
+    public function getRecent($limit = 15) {
 
+    }
 }
