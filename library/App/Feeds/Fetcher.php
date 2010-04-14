@@ -117,9 +117,9 @@ class App_Feeds_Fetcher {
                         'dateModified' => $entry->getDateModified(),
                         'authors'       => $entry->getAuthors(),
                         'link'         => $entry->getLink(),
-                        'content'      => $entry->getContent()
+                        'content'      => $entry->getContent(),
+                        //'create_date'  => $entry->getDateCreated(),
                 );
-                //pa($edata);
                 $data['entries'][] = $edata;
             }
             $result = $data;
