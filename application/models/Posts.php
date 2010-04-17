@@ -15,7 +15,7 @@ class App_Model_Posts extends App_Model_Base_Posts
     public function getRecent($limit = 10) {
         $query = Doctrine_Query::create();
         $query->select()->from($this->getTable()->getClassnameToReturn())
-                ->orderBy('create_date DESC')->limit(15);
+                ->orderBy('create_date DESC')->limit($limit);
         return $query->fetchArray(array());
     }
 }

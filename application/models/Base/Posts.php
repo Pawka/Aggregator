@@ -13,9 +13,11 @@
  * @property string $body_cleared
  * @property timestamp $create_date
  * @property timestamp $update_date
+ * @property timestamp $post_date
  * @property integer $rating_up
  * @property integer $rating_down
  * @property integer $feed_id
+ * @property string $author
  * @property App_Model_Feeds $Feeds
  * @property Doctrine_Collection $Wordlocation
  * 
@@ -95,6 +97,14 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'notnull' => true,
              'autoincrement' => false,
              ));
+        $this->hasColumn('post_date', 'timestamp', null, array(
+             'type' => 'timestamp',
+             'fixed' => false,
+             'unsigned' => false,
+             'primary' => false,
+             'notnull' => true,
+             'autoincrement' => false,
+             ));
         $this->hasColumn('rating_up', 'integer', 4, array(
              'type' => 'integer',
              'length' => 4,
@@ -122,6 +132,15 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'unsigned' => false,
              'primary' => false,
              'notnull' => true,
+             'autoincrement' => false,
+             ));
+        $this->hasColumn('author', 'string', 127, array(
+             'type' => 'string',
+             'length' => 127,
+             'fixed' => false,
+             'unsigned' => false,
+             'primary' => false,
+             'notnull' => false,
              'autoincrement' => false,
              ));
     }

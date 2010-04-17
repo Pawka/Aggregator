@@ -67,17 +67,20 @@ class App_Feeds_Fetcher {
 
 
     protected function savePost($data, $post_id = null) {
+        $date_format = "Y-MM-dd H:m:s";
         $post = new App_Model_Posts();
-        
         if ($post_id !== null) {
             $post->assignIdentifier($post_id);
         }
-        else {
-            $post->create_date = new Doctrine_Expression('NOW()');
-        }
 
-        $post->fromArray($data);
-        $post->update_date = new Doctrine_Expression('NOW()');
+        $post_data = $data;
+        $post_data['update_date']   = $data['update_date']->toString($date_format);
+        $post_data['post_date'] = $data['create_date']->toString($date_format);
+        if (!empty($data['author']) && isset($data['author'][0]['name'])) {
+            $post_data['author'] = $data['author'][0]['name'];
+        }
+        $post->fromArray($post_data);
+        $post->create_date = new Doctrine_Expression('NOW()');
         try {
             $post->save();
         }
@@ -112,13 +115,13 @@ class App_Feeds_Fetcher {
 
             foreach ($source as $entry) {
                 $edata = array(
-                        'title'        => $entry->getTitle(),
-                        'description'  => $entry->getDescription(),
-                        'dateModified' => $entry->getDateModified(),
-                        'authors'       => $entry->getAuthors(),
-                        'link'         => $entry->getLink(),
-                        'content'      => $entry->getContent(),
-                        //'create_date'  => $entry->getDateCreated(),
+                        'title'         => $entry->getTitle(),
+                        'description'   => $entry->getDescription(),
+                        'update_date'   => $entry->getDateModified(),
+                        'author'        => $entry->getAuthors(),
+                        'link'          => $entry->getLink(),
+                        'content'       => $entry->getContent(),
+                        'create_date'   => $entry->getDateCreated(),
                 );
                 $data['entries'][] = $edata;
             }

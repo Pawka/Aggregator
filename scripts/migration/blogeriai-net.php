@@ -4,27 +4,12 @@
  * @author Povilas Balzaravičius <pavvka@gmail.com>
  */
 
-define('APPLICATION_ENV', 'development');
-define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../../application'));
-set_include_path(implode(PATH_SEPARATOR, array(
-        realpath(APPLICATION_PATH . '/../library'),
-        get_include_path(),
-)));
-
-require_once 'Zend/Application.php';
-
-// Create application, bootstrap, and run
-$application = new Zend_Application(
-        APPLICATION_ENV,
-        APPLICATION_PATH . '/configs/application.ini'
-);
-$application->bootstrap();
-
+require_once dirname(__FILE__) . '/../cli.php';
 
 /**
  * Db migration
  **/
-class Migration
+class Migration extends Application
 {
     
     /**
@@ -39,7 +24,7 @@ class Migration
      */
     private $logger = null;
 
-    function __construct()
+    public function init()
     {
         $this->db = Zend_Registry::get('db');
         $this->logger = Zend_Registry::get('logger');
@@ -63,7 +48,7 @@ class Migration
      */
     protected function migrateFeeds($truncate = true) {
         $sql = new Zend_Db_Select($this->db);
-        $sql->from('blogeriai_feeds')->where('status = ?', 'active');
+        $sql->from('blogeriai_feeds');
         $results = $this->db->fetchAll($sql);
 
         $this->logger->info("Migrating feeds data...");
@@ -89,10 +74,12 @@ class Migration
         $this->logger->info("Feeds migrated: {$i}");
     }
 
-    protected function migrateTest() {
-        $this->logger->info("test");
-    }     
-
+    /**
+     * migratePosts 
+     * 
+     * @param bool $truncate 
+     * @return void
+     */
     protected function migratePosts($truncate = true)
     {
         $limit = 100;
@@ -119,10 +106,11 @@ class Migration
                         'link'          => $row['link'],
                         'body'          => $row['body'],
                         'excerpt'       => null,
-                        'body_cleared'  => null,
+                        'body_cleared'  => strip_tags($row['body']),
                         'create_date'   => $row['created_at'],
                         'update_date'   => $row['updated_at'],
                         'feed_id'       => $row['feed_id'],
+                        'author'        => $row['author']
                         );
                 try {
                     $this->db->insert('posts', $data);
@@ -148,5 +136,6 @@ class Migration
     }
 }
 $migration = new migration();
+//$migration->migrate('Feeds');
 $migration->migrate('Posts');
 ?>
