@@ -12,10 +12,21 @@
  */
 class App_Model_Posts extends App_Model_Base_Posts
 {
-    public function getRecent($limit = 10) {
+    public function getRecent($limit = 10, $prepare_dates = true) {
         $query = Doctrine_Query::create();
-        $query->select()->from($this->getTable()->getClassnameToReturn())
-                ->orderBy('post_date DESC')->limit($limit);
-        return $query->fetchArray(array());
+        $query->select("p.id, p.title, p.link, p.post_date, p.author,
+            f.title AS feed_title, f.url AS feed_url, f.rss_url")
+                ->from('App_Model_Posts p, p.Feeds f')
+                ->where('f.active = 1')
+                ->where('p.active = 1')
+                ->orderBy('p.post_date DESC')->limit($limit);
+
+        $result = $query->fetchArray(array());
+        if (!empty($result)) {
+            foreach ($result as $key => $row) {
+                $result[ $key ]['post_date'] = new Zend_Date($row['post_date']);
+            }
+        }
+        return $result;
     }
 }

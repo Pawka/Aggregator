@@ -11,13 +11,9 @@ class IndexController extends Site_Controller {
 
         $list = $model->getRecent();
         foreach ($list as $key => $row) {
-            $date = new Zend_Date($row['post_date']);
-            $list[ $key ]['date'] = $date->toString(Zend_Date::DATE_LONG, 'lt_LT');
+            $list[ $key ]['date'] = $list[ $key ]['post_date']->toString(Zend_Date::DATE_LONG, 'lt_LT');
         }
-
-
         $this->view->list = $list;
     }
-
 }
 

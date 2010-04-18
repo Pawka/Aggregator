@@ -11,8 +11,10 @@
     <div class="summary">
         <h3><a href="<?=$row['link']?>" target="_blank"><?=$this->escape($row['title']);?></a></h3>
         <div class="meta">
-            <a href="#">Pawka</a>
-            <span class="date"><?=$row['date']?></span>
+            <span class="date"><?=$row['date']?></span> /
+            <span class="date">
+                <a href="<?=$row['Feeds']['feed_url']?>" target="_blank"><?=$row['Feeds']['feed_url']?></a>
+            </span>
         </div>
     </div>
 </div>

@@ -17,6 +17,7 @@
  * @property integer $rating_up
  * @property integer $rating_down
  * @property integer $feed_id
+ * @property integer $active
  * @property string $author
  * @property App_Model_Feeds $Feeds
  * @property Doctrine_Collection $Wordlocation
@@ -143,6 +144,17 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'notnull' => false,
              'autoincrement' => false,
              ));
+        $this->hasColumn('active', 'integer', 1, array(
+             'type' => 'integer',
+             'length' => 1,
+             'fixed' => false,
+             'unsigned' => false,
+             'primary' => false,
+             'default' => '1',
+             'notnull' => true,
+             'autoincrement' => false,
+             ));
+
     }
 
     public function setUp()

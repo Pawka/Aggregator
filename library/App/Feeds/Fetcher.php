@@ -71,7 +71,7 @@ class App_Feeds_Fetcher {
         $post = new App_Model_Posts();
 
         $post_data = array(
-            'title'         => $data['title'],
+            'title'         => trim($data['title']),
             'body'          => $data['description'],
             'body_cleared'  => strip_tags($data['description']),
             'link'          => $data['link'],
