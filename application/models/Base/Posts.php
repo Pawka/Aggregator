@@ -39,18 +39,18 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'primary' => true,
              'autoincrement' => true,
              ));
-        $this->hasColumn('title', 'string', 256, array(
+        $this->hasColumn('title', 'string', 255, array(
              'type' => 'string',
-             'length' => 256,
+             'length' => 255,
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
-        $this->hasColumn('link', 'string', 256, array(
+        $this->hasColumn('link', 'string', 255, array(
              'type' => 'string',
-             'length' => 256,
+             'length' => 255,
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
@@ -86,7 +86,7 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('update_date', 'timestamp', null, array(
@@ -94,7 +94,7 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('post_date', 'timestamp', null, array(
@@ -102,7 +102,7 @@ abstract class App_Model_Base_Posts extends Doctrine_Record
              'fixed' => false,
              'unsigned' => false,
              'primary' => false,
-             'notnull' => true,
+             'notnull' => false,
              'autoincrement' => false,
              ));
         $this->hasColumn('rating_up', 'integer', 4, array(

@@ -67,20 +67,38 @@ class App_Feeds_Fetcher {
 
 
     protected function savePost($data, $post_id = null) {
-        $date_format = "Y-MM-dd H:m:s";
+        $date_format = "YYYY-MM-dd HH:mm:ss";
         $post = new App_Model_Posts();
+
+        $post_data = array(
+            'title'         => $data['title'],
+            'body'          => $data['description'],
+            'body_cleared'  => strip_tags($data['description']),
+            'link'          => $data['link'],
+            'feed_id'       => $data['feed_id'],
+            'update_date'   => new Doctrine_Expression('NOW()'),
+            'post_date'     => new Doctrine_Expression('NOW()'),
+            'author'        => null
+        );
+
         if ($post_id !== null) {
             $post->assignIdentifier($post_id);
         }
+        else {
+            $post_data['create_date'] = new Doctrine_Expression('NOW()');
+        }
 
-        $post_data = $data;
-        $post_data['update_date']   = $data['update_date']->toString($date_format);
-        $post_data['post_date'] = $data['create_date']->toString($date_format);
+        if ($data['update_date'] != null) {
+            $post_data['update_date'] = $data['update_date']->toString($date_format);
+        }
+        if ($data['pub_date'] != null) {
+            $post_data['post_date'] = $data['pub_date']->toString($date_format);
+        }
         if (!empty($data['author']) && isset($data['author'][0]['name'])) {
             $post_data['author'] = $data['author'][0]['name'];
         }
         $post->fromArray($post_data);
-        $post->create_date = new Doctrine_Expression('NOW()');
+        
         try {
             $post->save();
         }
@@ -114,15 +132,23 @@ class App_Feeds_Fetcher {
             );
 
             foreach ($source as $entry) {
+                $entry_key = $source->key() + 1;
                 $edata = array(
                         'title'         => $entry->getTitle(),
                         'description'   => $entry->getDescription(),
-                        'update_date'   => $entry->getDateModified(),
                         'author'        => $entry->getAuthors(),
                         'link'          => $entry->getLink(),
                         'content'       => $entry->getContent(),
-                        'create_date'   => $entry->getDateCreated(),
                 );
+                try {
+                    $date_string = trim($entry->getXPath()->evaluate("string(//item[{$entry_key}]/pubDate)"));
+                    $date = new Zend_Date($date_string, Zend_Date::RFC_1123);
+                    $edata['pub_date'] = $edata['update_date'] = $date;
+                }
+                catch (Exception $e) {
+                    $edata['pub_date'] = $entry->getDateCreated();
+                    $edata['update_date'] = $entry->getDateModified();
+                }
                 $data['entries'][] = $edata;
             }
             $result = $data;
