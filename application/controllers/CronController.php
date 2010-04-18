@@ -13,5 +13,6 @@ class CronController extends Site_Controller {
     public function fetchAction() {
         $fetcher = new App_Feeds_Fetcher();
         $fetcher->fetch();
+
     }
 }

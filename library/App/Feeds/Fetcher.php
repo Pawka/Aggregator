@@ -26,11 +26,13 @@ class App_Feeds_Fetcher {
 
     public function fetch() {
         $query = Doctrine_Query::create();
-        $query->from('App_Model_Feeds')->where('active = 1');
+        $query->from('App_Model_Feeds')
+                ->where('active = 1');
+        
         foreach ($query->execute() as $row) {
             $content = $this->readFeed($row);
             if ($content !== null) {
-                $this->logger->info("Fetching feed: {$content['title']}");
+                $this->logger->info("Fetching feed: #{$row->id} {$content['title']}");
                 $this->savePosts($row, $content['entries']);
             }
             $row->free();
@@ -51,18 +53,17 @@ class App_Feeds_Fetcher {
         $links = Site_Tools_Array::getValues($posts, 'link');
         $existingPosts = array();
         if (!empty($links)) {
-            $q = Doctrine_Query::create()->select("*")->from('App_Model_Posts')
+            $q = Doctrine_Query::create()->select("id, LOWER(link) AS link")
+                    ->from('App_Model_Posts')
                     ->whereIn('link', $links);
             $existingPosts = $q->fetchArray();
             $existingPosts = Site_Tools_Array::rewriteKeys($existingPosts, 'link');
         }
-
         foreach ($posts as $row) {
             $post_id = isset($existingPosts[ $row['link'] ]) ? $existingPosts[ $row['link'] ]['id'] : null;
             $row['feed_id'] = $feed_row->id;
             $this->savePost($row, $post_id);
         }
-
     }
 
 
@@ -77,7 +78,7 @@ class App_Feeds_Fetcher {
             'link'          => $data['link'],
             'feed_id'       => $data['feed_id'],
             'update_date'   => new Doctrine_Expression('NOW()'),
-            'post_date'     => new Doctrine_Expression('NOW()'),
+            'post_date'     => null,
             'author'        => null
         );
 
@@ -98,13 +99,13 @@ class App_Feeds_Fetcher {
             $post_data['author'] = $data['author'][0]['name'];
         }
         $post->fromArray($post_data);
-        
         try {
             $post->save();
         }
         catch (Exception $e) {
             $this->logger->err($e->getMessage());
         }
+        
         $post->free();
     }
 
@@ -159,7 +160,6 @@ class App_Feeds_Fetcher {
 
         $feed->last_fetch_date = date("Y-m-d H:i:s");
         $feed->save();
-        
         return $result;
     }
 }
