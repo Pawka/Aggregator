@@ -1,7 +1,7 @@
 <?php
 
 /**
- * App_Search_BaseAbstract
+ * App_Search_Base
  *
  * @author Povilas Balzaravičius <povilas.balzaravicius@gmail.com>
  */

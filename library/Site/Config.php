@@ -76,7 +76,7 @@ class Site_Config {
     private function _prepareDynamicValues() {
         $base_url = $this->site->base;
 
-        $this->_config->site->url->admin = $base_url . $this->site->dir->admin;
+        //$this->_config->site->url->admin = $base_url . $this->site->dir->admin;
     }
 }
 ?>
