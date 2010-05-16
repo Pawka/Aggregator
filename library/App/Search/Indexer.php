@@ -9,7 +9,13 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
 
     public function run() {
-        $this->logger->log("labas", Zend_Log::ALERT);
+
+        $this->setFilter('Lowercase');
+
+
+        $text = "Hei, labas. <em>Kaip tu <strong>gyveni</strong>? Kiek kaiNUoja?</em> 2.15? C++ !!!";
+
+        var_dump($this->splitter->split($text));
     }
 
 }

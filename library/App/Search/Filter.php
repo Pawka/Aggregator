@@ -1,15 +1,14 @@
 <?php
 
 /**
- * App_Search_Splitter
+ * App_Search_Filter
  *
  * @author Povilas Balzaravičius <povilas.balzaravicius@gmail.com>
  */
-abstract class App_Search_Splitter implements App_Search_Splitter_Interface {
-
+abstract class App_Search_Filter implements App_Search_Filter_Interface {
 
     public function  __construct($config = array()) {
-
+        
     }
 
     /**
@@ -21,5 +20,6 @@ abstract class App_Search_Splitter implements App_Search_Splitter_Interface {
     public static function getNamespace() {
         return get_class();
     }
+   
 }
 

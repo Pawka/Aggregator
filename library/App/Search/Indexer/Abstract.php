@@ -21,6 +21,14 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
     protected $splitter;
 
 
+    /**
+     * List of used filters.
+     *
+     * @var array
+     */
+    protected $filters = array();
+
+
     public function  __construct($config = array()) {
 
         if (array_key_exists('logger', $config)) {
@@ -37,7 +45,26 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
         else {
             $this->setSplitter('Regexp');
         }
+    }
 
+
+    /**
+     * Adds filter to filters list.
+     */
+    public function setFilter($filter) {
+        if (is_string($filter)) {
+            $class_name = App_Search_Filter::getNamespace() . '_' . ucfirst($filter);
+            if (class_exists($class_name)) {
+                $this->filters[] = new $class_name();
+            }
+            else {
+                throw new Exception('Unknown filter class: ' . $class_name);
+            }
+        }
+        else {
+            $this->filters[] = $filter;
+        }
+        return $this;
     }
 
 
