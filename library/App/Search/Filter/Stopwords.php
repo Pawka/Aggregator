@@ -154,7 +154,7 @@ class App_Search_Filter_Stopwords extends App_Search_Filter {
                     $result[] = $word;
                 }
             }
-            return $splitter->implode($result);
+            return $result;
         }
 
         return $this->exists($content) === true ? null : $content;

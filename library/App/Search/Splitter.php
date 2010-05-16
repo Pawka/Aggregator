@@ -14,7 +14,7 @@ abstract class App_Search_Splitter implements App_Search_Splitter_Interface {
      *
      * @var array
      */
-    protected $filters = array();
+    protected $_postFilters = array();
 
     public function  __construct($config = array()) {
 
@@ -39,22 +39,37 @@ abstract class App_Search_Splitter implements App_Search_Splitter_Interface {
 
 
     /**
-     * Adds filter to filters list.
+     * Adds postfilter to the list.
      */
-    public function setFilter($filter, $params = array()) {
+    public function setPostFilter($filter, $params = array()) {
         if (is_string($filter)) {
             $class_name = App_Search_Filter::getNamespace() . '_' . ucfirst($filter);
             if (class_exists($class_name)) {
-                $this->filters[] = new $class_name($params);
+                $this->_postFilters[] = new $class_name($params);
             }
             else {
                 throw new Exception('Unknown filter class: ' . $class_name);
             }
         }
         else {
-            $this->filters[] = $filter;
+            $this->_postFilters[] = $filter;
         }
         return $this;
+    }
+
+
+    /**
+     * Applies setted postfilters for given content.
+     * @param string $content
+     * @return string
+     */
+    protected function runFilters($content) {
+
+        foreach ($this->_postFilters as $filter) {
+            $content = $filter->run($content);
+        }
+
+        return $content;
     }
 }
 

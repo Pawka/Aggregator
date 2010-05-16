@@ -111,6 +111,7 @@ class App_Search_Filter_WordLength extends App_Search_Filter {
 
         $words = $content;
         if (!is_array($content)) {
+            $words = array($content);
             $splitter = $this->getSplitter();
             if ($splitter !== null) {
                 $words = $splitter->split($content);
@@ -124,7 +125,7 @@ class App_Search_Filter_WordLength extends App_Search_Filter {
                     $result[] = $word;
                 }
             }
-            return $splitter->implode($result);
+            return $result;
         }
 
         return $this->isValid($content) === true ? $content : null;

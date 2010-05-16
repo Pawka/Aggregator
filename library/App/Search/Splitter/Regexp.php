@@ -54,7 +54,9 @@ class App_Search_Splitter_Regexp extends App_Search_Splitter implements App_Sear
      * @return array
      */
     public function split($content) {
-        return preg_split($this->getRegexp(), $content, null, PREG_SPLIT_NO_EMPTY);
+        $result = preg_split($this->getRegexp(), $content, null, PREG_SPLIT_NO_EMPTY);
+        $result = $this->runFilters($result);
+        return $result;
     }
 }
 

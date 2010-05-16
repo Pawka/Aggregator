@@ -8,6 +8,17 @@
 abstract class App_Search_Indexer_Abstract extends App_Search_Base {
 
     /**
+     * Filter type used before spliting.
+     */
+    const FILTER_POST = 1;
+
+    /**
+     * Filter type used after spliting.
+     */
+    const FILTER_PRE = 2;
+
+
+    /**
      * @var Zend_Log
      */
     protected $logger;
@@ -26,8 +37,15 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
      *
      * @var array
      */
-    protected $filters = array();
+    protected $_preFilters = array();
 
+
+    /**
+     * List of added postfilters.
+     *
+     * @var array
+     */
+    protected $_postFilters = array();
 
     public function  __construct($config = array()) {
 
@@ -50,23 +68,63 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
 
     /**
      * Adds filter to filters list.
+     * @param App_Search_Filter $filter
+     * @param array $params
+     * @param int $type
+     * @return App_Search_Indexer_Abstract
      */
-    public function setFilter($filter, $params = array()) {
+    public function setFilter($filter, $params = array(), $type = self::FILTER_PRE) {
         if (is_string($filter)) {
             $class_name = App_Search_Filter::getNamespace() . '_' . ucfirst($filter);
             if (class_exists($class_name)) {
-                $this->filters[] = new $class_name($params);
+                $this->_addFilterObject(new $class_name($params), $type);
             }
             else {
                 throw new Exception('Unknown filter class: ' . $class_name);
             }
         }
         else {
-            $this->filters[] = $filter;
+            $this->_addFilterObject($filter, $type);
         }
         return $this;
     }
 
+
+    /**
+     * Adds filter object to the list depending of type.
+     */
+    private function _addFilterObject($filter, $type) {
+        switch ($type) {
+            case self::FILTER_POST:
+                $this->_postFilters[] = $filter;
+                break;
+
+            case self::FILTER_PRE:
+                $this->_preFilters[] = $filter;
+                break;
+        }
+    }
+
+
+    /**
+     * Returns list of filters depending of type.
+     * @param int $type
+     * @return array
+     */
+    public function getFilters($type = self::FILTER_PRE) {
+        switch ($type) {
+            case self::FILTER_POST:
+                return $this->_postFilters;
+                break;
+
+            case self::FILTER_PRE:
+                return $this->_preFilters;
+                break;
+        }
+
+        return null;
+    }
+    
 
     /**
      * Set splitter
@@ -129,12 +187,14 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
      * @param string $content
      * @return string
      */
-    protected function runFilters($content) {
-
-        foreach ($this->filters as $filter) {
-            $content = $filter->run($content);
+    protected function runFilters($content, $type = self::FILTER_PRE) {
+        
+        $filters = $this->getFilters($type);
+        if (!empty($filters)) {
+            foreach ($filters as $filter) {
+                $content = $filter->run($content);
+            }
         }
-
         return $content;
     }
 
