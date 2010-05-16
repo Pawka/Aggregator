@@ -21,5 +21,12 @@ abstract class App_Search_Splitter implements App_Search_Splitter_Interface {
     public static function getNamespace() {
         return get_class();
     }
+
+    /**
+     * Implodes list of tokens to a string with space separator.
+     */
+    public function implode($array) {
+        return implode(' ', $array);
+    }
 }
 

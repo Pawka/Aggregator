@@ -51,11 +51,11 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
     /**
      * Adds filter to filters list.
      */
-    public function setFilter($filter) {
+    public function setFilter($filter, $params = array()) {
         if (is_string($filter)) {
             $class_name = App_Search_Filter::getNamespace() . '_' . ucfirst($filter);
             if (class_exists($class_name)) {
-                $this->filters[] = new $class_name();
+                $this->filters[] = new $class_name($params);
             }
             else {
                 throw new Exception('Unknown filter class: ' . $class_name);
@@ -121,6 +121,21 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
      */
     public function getLogger() {
         return $this->logger;
+    }
+
+
+    /**
+     * Applies setted filters for given content.
+     * @param string $content
+     * @return string
+     */
+    protected function runFilters($content) {
+
+        foreach ($this->filters as $filter) {
+            $content = $filter->run($content);
+        }
+
+        return $content;
     }
 
 }
