@@ -22,7 +22,7 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
 
 
     /**
-     * List of used filters.
+     * List of added filters.
      *
      * @var array
      */

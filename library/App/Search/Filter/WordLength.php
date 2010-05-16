@@ -109,10 +109,15 @@ class App_Search_Filter_WordLength extends App_Search_Filter {
             return $content;
         }
 
-        $splitter = $this->getSplitter();
+        $words = $content;
+        if (!is_array($content)) {
+            $splitter = $this->getSplitter();
+            if ($splitter !== null) {
+                $words = $splitter->split($content);
+            }
+        }
 
-        if ($splitter !== null) {
-            $words = $splitter->split($content);
+        if (is_array($words)) {
             $result = array();
             foreach ($words as $word) {
                 if ($this->isValid($word)) {
@@ -122,7 +127,7 @@ class App_Search_Filter_WordLength extends App_Search_Filter {
             return $splitter->implode($result);
         }
 
-        return $this->isValid($content);
+        return $this->isValid($content) === true ? $content : null;
     }
 
 
