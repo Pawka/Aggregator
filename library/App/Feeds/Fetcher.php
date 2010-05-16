@@ -60,7 +60,8 @@ class App_Feeds_Fetcher {
             $existingPosts = Site_Tools_Array::rewriteKeys($existingPosts, 'link');
         }
         foreach ($posts as $row) {
-            $post_id = isset($existingPosts[ $row['link'] ]) ? $existingPosts[ $row['link'] ]['id'] : null;
+            $link = strtolower($row['link']);
+            $post_id = isset($existingPosts[ $link ]) ? $existingPosts[ $link ]['id'] : null;
             $row['feed_id'] = $feed_row->id;
             $this->savePost($row, $post_id);
         }
@@ -135,8 +136,8 @@ class App_Feeds_Fetcher {
             foreach ($source as $entry) {
                 $entry_key = $source->key() + 1;
                 $edata = array(
-                        'title'         => $entry->getTitle(),
-                        'description'   => $entry->getDescription(),
+                        'title'         => trim($entry->getTitle()),
+                        'description'   => trim($entry->getDescription()),
                         'author'        => $entry->getAuthors(),
                         'link'          => $entry->getLink(),
                         'content'       => $entry->getContent(),
