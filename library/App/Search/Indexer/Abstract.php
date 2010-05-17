@@ -39,6 +39,12 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
      */
     protected $_preFilters = array();
 
+    /**
+     *
+     * @var Zend_Db_Adapter_Abstract
+     */
+    protected $_db;
+
 
     /**
      * List of added postfilters.
@@ -62,6 +68,13 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
         }
         else {
             $this->setSplitter('Regexp');
+        }
+
+        if (array_key_exists('db', $config)) {
+            $this->_db = $config['db'];
+        }
+        else {
+            $this->_db = Zend_Registry::get('db');
         }
     }
 
@@ -197,6 +210,15 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
         }
         return $content;
     }
+
+
+    /**
+     * Checks if token exists in index
+     *
+     * @param string $token
+     * @return boolean
+     */
+    abstract protected function indexExists($token);
 
 }
 ?>
