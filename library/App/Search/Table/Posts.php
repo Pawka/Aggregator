@@ -7,6 +7,6 @@
  */
 class App_Search_Table_Posts extends App_Search_Table {
 
-    protected $_name = '100_posts';
+    protected $_name = 'posts';
 
 }

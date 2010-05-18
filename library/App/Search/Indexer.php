@@ -19,6 +19,13 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
     protected $clean_relations = false;
 
     /**
+     * Cache object
+     * 
+     * @var Zend_Cache
+     */
+    private $_cache;
+
+    /**
      * Indexes model
      *
      * @var App_Search_Table_Index
@@ -63,23 +70,34 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     public function  __construct($config = array()) {
         parent::__construct($config);
+        
 
         if (array_key_exists('db_prefix', $config)) {
-            $this->setOptions('db_prefix', $config['db_prefix']);
+            $this->setOption('db_prefix', $config['db_prefix']);
             Zend_Registry::set('db_prefix', $config['db_prefix']);
         }
-
         $this->_index = new App_Search_Table_Index();
         $this->_relation = new App_Search_Table_Relations();
         $this->_posts = new App_Search_Table_Posts();
     }
 
 
+    /**
+     * Truncates index and relation tables. Used for testing purposes.
+     */
+    private function _truncateTables() {
+        $this->_index->truncate();
+        $this->_relation->truncate();
+    }
+
     
     public function run() {
+
+        $this->_truncateTables();
+
         $scriptTimeStart = microtime(true);
         $this->logger->info("Indexing started.");
-        $list = $this->_posts->fetchAll(null, null, 2);
+        $list = $this->_posts->fetchAll();
 
         foreach ($list as $row) {
             $content = $this->extractContent($row);
@@ -92,7 +110,6 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $this->logger->info("- Documents indexed: {$this->_indexed_documens}");
         $this->logger->info("- Relations created: {$this->_indexed_relations}");
         $this->logger->info("- Tokens indexed:    {$this->_indexed_tokens}");
-
     }
 
 
@@ -215,6 +232,22 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         }
         else {
             throw new Exception("Table {$name} does not exist.");
+        }
+    }
+
+
+    private function _initCache() {
+        $frontendOptions = array('lifeTime' => 10);
+        $backendOptions = array('cacheDir' => './tmp/');
+
+        $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
+
+        if (!$result = $cache->get('time') ){
+            $time = date('r');
+            echo "generated: " . $time;
+            $cache->save($time, 'time');
+        } else {
+            echo "cache hit: ". $cache->get('time');
         }
     }
 }

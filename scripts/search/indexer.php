@@ -2,6 +2,11 @@
 
 require_once dirname(__FILE__) . '/../cli.php';
 
+
+ini_set('max_execution_time', 0);
+ini_set('memory_limit', '1G');
+
+
 /**
  * Index data
  **/
@@ -17,13 +22,13 @@ class Indexer extends Application {
     protected function init() {
 
         $config = array(
-            'db_prefix' => '100',
+            'db_prefix' => '5000',
         );
 
         $xml =  APPLICATION_PATH . '/configs/search.xml';
         $stopwords = new Zend_Config_Xml($xml, 'production');
         
-        $this->indexer = new App_Search_Indexer();
+        $this->indexer = new App_Search_Indexer($config);
         $this->indexer->setFilter('Lowercase')
             ->setFilter('CleanHTML')
             ->setFilter('WordLength', array('min' => 3),

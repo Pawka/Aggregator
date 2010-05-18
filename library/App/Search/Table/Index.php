@@ -7,6 +7,6 @@
  */
 class App_Search_Table_Index extends App_Search_Table {
 
-    protected $_name = '100_wordlist';
+    protected $_name = 'wordlist';
 
 }

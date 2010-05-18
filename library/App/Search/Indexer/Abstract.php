@@ -54,7 +54,6 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
     protected $_postFilters = array();
 
     public function  __construct($config = array()) {
-
         if (array_key_exists('logger', $config)) {
             $this->setLogger($config['logger']);
         }
