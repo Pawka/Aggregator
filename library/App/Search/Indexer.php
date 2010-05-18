@@ -16,6 +16,13 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     protected $db_prefix;
 
+    /**
+     * Indexes model
+     *
+     * @var App_Search_Table_Index
+     */
+    private $_index;
+
 
     public function  __construct($config = array()) {
         parent::__construct($config);
@@ -24,6 +31,9 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
             $this->setOptions('db_prefix', $config['db_prefix']);
             Zend_Registry::set('db_prefix', $config['db_prefix']);
         }
+
+
+        $this->_index = new App_Search_Table_Index();
     }
 
     
@@ -32,8 +42,6 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $this->setOption('table_index', 'wordlist')
                 ->setOption('table_ref', 'wordlocation')
                 ->setOption('table_content', 'posts');
-
-
 
 
         $xml =  APPLICATION_PATH . '/configs/search.xml';
@@ -47,13 +55,8 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
         $text = "Hei, labas. <em>Kaip tu <strong>gyveni</strong>? Kiek kaiNUoja?</em> 2.15? C++ !!!";
 
-        $result = $this->indexExists('krabas');
-        var_dump($result); exit;
+        $this->addToIndex(123, $text);
 
-        $text = $this->runFilters($text, self::FILTER_PRE);
-        $words = $this->splitter->split($text);
-        $words = $this->runFilters($words, self::FILTER_POST);
-        var_dump($words);
     }
 
 
@@ -65,19 +68,45 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      * @return int
      */
     protected function indexExists($token) {
-        $model = new App_Search_Table_Index();
-
         $where = array(
             'word' => $token
         );
 
-        $select = new Zend_Db_Table_Select($model);
+        $select = new Zend_Db_Table_Select($this->_index);
         $select->where('word = ?', $token)->limit(1);
-        $result = $model->fetchRow($select);
+        $result = $this->_index->fetchRow($select);
         if ($result !== null) {
             return $result->id;
         }
-        return null;
+        return false;
+    }
+
+
+    /**
+     * Adds token to index if it is not indexed yet.
+     * @param string $token
+     * @return int Index id in database
+     */
+    protected function indexToken($token) {
+        $index_id = $this->indexExists($token);
+        if ($index_id === false) {
+            $data = array(
+                'word' => $token
+            );
+
+            $row = $this->_index->createRow($data);
+            $row->save();
+            $index_id = $row->id;
+        }
+        return $index_id;
+    }
+
+
+    protected function addToIndex($document_id, $content) {
+        $filtered_content = $this->runFilters($content, self::FILTER_PRE);
+        $tokens = $this->splitter->split($content);
+        $tokens = $this->runFilters($tokens, self::FILTER_POST);
+        var_dump($tokens);
     }
 
 
@@ -100,5 +129,4 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
             throw new Exception("Table {$name} does not exist.");
         }
     }
-
 }
