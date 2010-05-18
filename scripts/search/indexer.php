@@ -15,6 +15,11 @@ class Indexer extends Application {
     private $indexer = null;
 
     protected function init() {
+
+        $config = array(
+            'db_prefix' => '100',
+        );
+
         $this->indexer = new App_Search_Indexer();
     }
 

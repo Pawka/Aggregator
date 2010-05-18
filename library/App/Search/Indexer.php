@@ -16,16 +16,24 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     protected $db_prefix;
 
+
+    public function  __construct($config = array()) {
+        parent::__construct($config);
+
+        if (array_key_exists('db_prefix', $config)) {
+            $this->setOptions('db_prefix', $config['db_prefix']);
+            Zend_Registry::set('db_prefix', $config['db_prefix']);
+        }
+    }
+
     
     public function run() {
 
         $this->setOption('table_index', 'wordlist')
                 ->setOption('table_ref', 'wordlocation')
-                ->setOption('table_content', 'posts')
-                ->setOption('db_prefix', '100');
+                ->setOption('table_content', 'posts');
 
 
-        var_dump($this->getOptions()); exit;
 
 
         $xml =  APPLICATION_PATH . '/configs/search.xml';
@@ -39,6 +47,9 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
         $text = "Hei, labas. <em>Kaip tu <strong>gyveni</strong>? Kiek kaiNUoja?</em> 2.15? C++ !!!";
 
+        $result = $this->indexExists('krabas');
+        var_dump($result); exit;
+
         $text = $this->runFilters($text, self::FILTER_PRE);
         $words = $this->splitter->split($text);
         $words = $this->runFilters($words, self::FILTER_POST);
@@ -46,13 +57,27 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
     }
 
 
+
+    /**
+     * Checks if given token exists in index table. If so, returns index item
+     * id. If token is not indexed returns null.
+     * @param string $token
+     * @return int
+     */
     protected function indexExists($token) {
+        $model = new App_Search_Table_Index();
 
-        //$this->_db->
+        $where = array(
+            'word' => $token
+        );
 
-        //$sql = new Zend_Db_Select($adapter)
-
-        $this->_db->fetchOne($sql, $bind);
+        $select = new Zend_Db_Table_Select($model);
+        $select->where('word = ?', $token)->limit(1);
+        $result = $model->fetchRow($select);
+        if ($result !== null) {
+            return $result->id;
+        }
+        return null;
     }
 
 
