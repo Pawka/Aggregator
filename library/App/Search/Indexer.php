@@ -39,6 +39,27 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      */
     private $_posts;
 
+    /**
+     * Count of indexed documents.
+     *
+     * @var int
+     */
+    private $_indexed_documens = 0;
+
+    /**
+     * Count of indexed tokens.
+     *
+     * @var int
+     */
+    private $_indexed_tokens = 0;
+
+    /**
+     * Count of indexed relations.
+     *
+     * @var int
+     */
+    private $_indexed_relations = 0;
+
 
     public function  __construct($config = array()) {
         parent::__construct($config);
@@ -56,16 +77,30 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     
     public function run() {
-
-        $list = $this->_posts->fetchAll(null, null, 1);
+        $scriptTimeStart = microtime(true);
+        $this->logger->info("Indexing started.");
+        $list = $this->_posts->fetchAll(null, null, 2);
 
         foreach ($list as $row) {
             $content = $this->extractContent($row);
             $this->addToIndex($row['id'], $content, $this->clean_relations);
         }
+        $scriptTimeEnd 	= microtime(true);
+        $scriptTimeRaw = $scriptTimeEnd - $scriptTimeStart;
+        $scriptTime = number_format($scriptTimeRaw,4,',','.');
+        $this->logger->info("Indexing finished in {$scriptTime} sec.");
+        $this->logger->info("- Documents indexed: {$this->_indexed_documens}");
+        $this->logger->info("- Relations created: {$this->_indexed_relations}");
+        $this->logger->info("- Tokens indexed:    {$this->_indexed_tokens}");
+
     }
 
 
+    /**
+     * Creates base content from title and body strings.
+     * @param array $row
+     * @return string
+     */
     protected function extractContent($row) {
         $content = "{$row['title']} {$row['body']}";
         return $content;
@@ -101,6 +136,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
     protected function indexToken($token) {
        $index_id = $this->indexExists($token);
         if ($index_id === false) {
+            $this->_indexed_tokens++;
             $data = array(
                 'word' => $token
             );
@@ -121,6 +157,8 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      */
     protected function addToIndex($document_id, $content, $autoClean = true) {
 
+        $this->_indexed_documens++;
+
         //Cleans earlier relations.
         if ($autoClean === true) {
             $where = array(
@@ -135,8 +173,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
         foreach ($tokens as $key => $token) {
             $index_id = $this->indexToken($token);
-            
-            //$this->addRelation($document_id, $index_id, $key + 1);
+            $this->addRelation($document_id, $index_id, $key + 1);
         }
     }
 
@@ -148,6 +185,8 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      * @param int $location
      */
     protected function addRelation($document_id, $index_id, $location) {
+        $this->_indexed_relations++;
+
         $data = array(
             'post_id' => $document_id,
             'word_id' => $index_id,
