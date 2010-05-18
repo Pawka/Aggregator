@@ -48,21 +48,31 @@ function lstOutputRow($data) {
 
     $id = "dump_" . rand(1, time());
 
-    echo "<div style=\"border:1px solid #555;background-color:#DDD;\">";
-    echo "<div style=\"background-color: #333; padding: 2px;\" onclick=\"var el = document.getElementById('{$id}'); el.style.display = (el.style.display == 'none') ? 'block' : 'none';\">";
-    echo "<input value=\"Hide\" type=\"button\" />";
-    echo "</div>";
-    echo "<div id=\"{$id}\">";
-    echo "<pre style=\"margin:3px;font-size:11px;color:blue\">";
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        echo "<div style=\"border:1px solid #555;background-color:#DDD;\">";
+        echo "<div style=\"background-color: #333; padding: 2px;\" onclick=\"var el = document.getElementById('{$id}'); el.style.display = (el.style.display == 'none') ? 'block' : 'none';\">";
+        echo "<input value=\"Hide\" type=\"button\" />";
+        echo "</div>";
+        echo "<div id=\"{$id}\">";
+        echo "<pre style=\"margin:3px;font-size:11px;color:blue\">";
+    }
+
     foreach ($data as $row) {
         lstOutputItem($row);
     }
-    echo "</div></div>";
+
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        echo "</div></div>";
+    }
 }
 
 
 function lstOutputItem($data) {
-    echo "<pre style=\"margin:6px 3px;font-size:11px;color:blue;border-bottom: 1px solid rgb(205, 205, 205);padding-bottom: 5px\">";
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        echo "<pre style=\"margin:6px 3px;font-size:11px;color:blue;border-bottom: 1px solid rgb(205, 205, 205);padding-bottom: 5px\">";
+    }
     var_dump($data);
-    echo "</pre>";
+    if (isset($_SERVER['HTTP_USER_AGENT'])) {
+        echo "</pre>";
+    }
 }

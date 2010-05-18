@@ -15,7 +15,7 @@ class App_Search_Filter_Lowercase extends App_Search_Filter {
      * @return string
      */
     public function run($content) {
-        return mb_strtolower($content);
+        return strtolower($content);
     }
     
 

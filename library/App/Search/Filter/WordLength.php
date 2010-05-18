@@ -7,23 +7,6 @@
  */
 class App_Search_Filter_WordLength extends App_Search_Filter {
 
-
-    public function  __construct($config = array()) {
-
-        if (array_key_exists('min', $config)) {
-            $this->setMin($config['min']);
-        }
-
-        if (array_key_exists('max', $config)) {
-            $this->setMax($config['max']);
-        }
-
-        if (array_key_exists('splitter', $config)) {
-            $this->setSplitter($config['splitter']);
-        }
-    }
-
-
     /**
      * Splitter object to explode text to tokens.
      *
@@ -45,6 +28,23 @@ class App_Search_Filter_WordLength extends App_Search_Filter {
      */
     private $_max = null;
 
+
+    private $_charset = 'utf8';
+
+    public function  __construct($config = array()) {
+
+        if (array_key_exists('min', $config)) {
+            $this->setMin($config['min']);
+        }
+
+        if (array_key_exists('max', $config)) {
+            $this->setMax($config['max']);
+        }
+
+        if (array_key_exists('splitter', $config)) {
+            $this->setSplitter($config['splitter']);
+        }
+    }
 
     public function setMin($value) {
         $this->_min = $value;
@@ -138,12 +138,11 @@ class App_Search_Filter_WordLength extends App_Search_Filter {
      * @return boolean
      */
     private function isValid($word) {
-
-        if (mb_strlen($word) < $this->_min) {
+        if (mb_strlen($word, $this->_charset) < $this->_min) {
             return false;
         }
 
-        if ($this->_max !== null && mb_strlen($word) > $this->_max) {
+        if ($this->_max !== null && mb_strlen($word, $this->_charset) > $this->_max) {
             return false;
         }
 

@@ -16,12 +16,28 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     protected $db_prefix;
 
+    protected $clean_relations = false;
+
     /**
      * Indexes model
      *
      * @var App_Search_Table_Index
      */
     private $_index;
+
+    /**
+     * Relations model
+     *
+     * @var App_Search_Table_Relations
+     */
+    private $_relation;
+
+    /**
+     * Posts model
+     *
+     * @var App_Search_Table_Posts
+     */
+    private $_posts;
 
 
     public function  __construct($config = array()) {
@@ -32,33 +48,28 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
             Zend_Registry::set('db_prefix', $config['db_prefix']);
         }
 
-
         $this->_index = new App_Search_Table_Index();
+        $this->_relation = new App_Search_Table_Relations();
+        $this->_posts = new App_Search_Table_Posts();
     }
+
 
     
     public function run() {
 
-        $this->setOption('table_index', 'wordlist')
-                ->setOption('table_ref', 'wordlocation')
-                ->setOption('table_content', 'posts');
+        $list = $this->_posts->fetchAll(null, null, 1);
 
-
-        $xml =  APPLICATION_PATH . '/configs/search.xml';
-        $stopwords = new Zend_Config_Xml($xml, 'production');
-
-        $this->setFilter('Lowercase');
-        $this->setFilter('CleanHTML');
-        $this->setFilter('WordLength', array('min' => 3), self::FILTER_POST);
-        $this->setFilter('Stopwords', array('stopwords' => $stopwords), self::FILTER_POST);
-
-
-        $text = "Hei, labas. <em>Kaip tu <strong>gyveni</strong>? Kiek kaiNUoja?</em> 2.15? C++ !!!";
-
-        $this->addToIndex(123, $text);
-
+        foreach ($list as $row) {
+            $content = $this->extractContent($row);
+            $this->addToIndex($row['id'], $content, $this->clean_relations);
+        }
     }
 
+
+    protected function extractContent($row) {
+        $content = "{$row['title']} {$row['body']}";
+        return $content;
+    }
 
 
     /**
@@ -88,7 +99,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      * @return int Index id in database
      */
     protected function indexToken($token) {
-        $index_id = $this->indexExists($token);
+       $index_id = $this->indexExists($token);
         if ($index_id === false) {
             $data = array(
                 'word' => $token
@@ -101,12 +112,50 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         return $index_id;
     }
 
+    
+    /**
+     * Adds document to index. Applies post/pre filters, indexes words and
+     * creates relations.
+     * @param int $document_id
+     * @param string $content
+     */
+    protected function addToIndex($document_id, $content, $autoClean = true) {
 
-    protected function addToIndex($document_id, $content) {
+        //Cleans earlier relations.
+        if ($autoClean === true) {
+            $where = array(
+                'post_id' => $document_id
+            );
+            $this->_relation->delete($where);
+        }
+
         $filtered_content = $this->runFilters($content, self::FILTER_PRE);
-        $tokens = $this->splitter->split($content);
+        $tokens = $this->splitter->split($filtered_content);
         $tokens = $this->runFilters($tokens, self::FILTER_POST);
-        var_dump($tokens);
+
+        foreach ($tokens as $key => $token) {
+            $index_id = $this->indexToken($token);
+            
+            //$this->addRelation($document_id, $index_id, $key + 1);
+        }
+    }
+
+
+    /**
+     * Adds relation between document and index token.
+     * @param int $document_id
+     * @param int $index_id
+     * @param int $location
+     */
+    protected function addRelation($document_id, $index_id, $location) {
+        $data = array(
+            'post_id' => $document_id,
+            'word_id' => $index_id,
+            'location' => $location
+        );
+
+        $result = $this->_relation->createRow($data);
+        $result->save();
     }
 
 
