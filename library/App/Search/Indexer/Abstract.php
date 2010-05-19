@@ -212,12 +212,12 @@ abstract class App_Search_Indexer_Abstract extends App_Search_Base {
 
 
     /**
-     * Checks if token exists in index
+     * Checks if token exists in index. If so, returns index id.
      *
      * @param string $token
      * @return boolean
      */
-    abstract protected function indexExists($token);
+    abstract protected function getIndexId($token);
 
 }
 ?>

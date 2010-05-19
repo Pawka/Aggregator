@@ -16,14 +16,39 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     protected $db_prefix;
 
+    /**
+     * If true, cleans document relations before indexing.
+     * @todo Do not work.
+     * @var boolean
+     */
     protected $clean_relations = false;
 
     /**
+     * If true, calls $this->_truncateTables() method
+     * @see App_Search_Indexer::_truncateTables()
+     * @var boolean
+     */
+    protected $truncate_tables = true;
+
+    /**
+     * If true, uses cache for indexing.
+     * @var boolean
+     */
+    protected $use_cache = true;
+
+    /**
      * Cache object
-     * 
-     * @var Zend_Cache
+     *
+     * @var Zend_Cache_Core
      */
     private $_cache;
+
+    /**
+     * Tag name for index cache items.
+     *
+     * @var string
+     */
+    protected $cache_tag_index = 'index';
 
     /**
      * Indexes model
@@ -70,7 +95,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
     public function  __construct($config = array()) {
         parent::__construct($config);
-        
+
 
         if (array_key_exists('db_prefix', $config)) {
             $this->setOption('db_prefix', $config['db_prefix']);
@@ -79,6 +104,8 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $this->_index = new App_Search_Table_Index();
         $this->_relation = new App_Search_Table_Relations();
         $this->_posts = new App_Search_Table_Posts();
+
+        $this->_initCache();
     }
 
 
@@ -90,10 +117,15 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $this->_relation->truncate();
     }
 
-    
+
+    /**
+     * Indexing process
+     */
     public function run() {
 
-        $this->_truncateTables();
+        if ($this->truncate_tables === true) {
+            $this->_truncateTables();
+        }
 
         $scriptTimeStart = microtime(true);
         $this->logger->info("Indexing started.");
@@ -130,18 +162,28 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      * @param string $token
      * @return int
      */
-    protected function indexExists($token) {
-        $where = array(
-            'word' => $token
-        );
+    protected function getIndexId($token) {
 
-        $select = new Zend_Db_Table_Select($this->_index);
-        $select->where('word = ?', $token)->limit(1);
-        $result = $this->_index->fetchRow($select);
-        if ($result !== null) {
-            return $result->id;
+        $index_id = false;
+        $id = 'token_' . md5($token);
+
+        if (!$index_id = $this->_cache->load($id)) {
+            $where = array(
+                    'word' => $token
+            );
+
+            $select = new Zend_Db_Table_Select($this->_index);
+            $select->where('word = ?', $token)->limit(1);
+            $result = $this->_index->fetchRow($select);
+            if ($result !== null) {
+                $this->_cache->save($result->id, $id, array($this->cache_tag_index));
+                $index_id = $result->id;
+            }
         }
-        return false;
+        else {
+            //$this->logger->info("Cached index: '{$token}'");
+        }
+        return $index_id;
     }
 
 
@@ -151,11 +193,11 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      * @return int Index id in database
      */
     protected function indexToken($token) {
-       $index_id = $this->indexExists($token);
-        if ($index_id === false) {
+        $index_id = $this->getIndexId($token);
+        if ($index_id == false) {
             $this->_indexed_tokens++;
             $data = array(
-                'word' => $token
+                    'word' => $token
             );
 
             $row = $this->_index->createRow($data);
@@ -165,7 +207,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         return $index_id;
     }
 
-    
+
     /**
      * Adds document to index. Applies post/pre filters, indexes words and
      * creates relations.
@@ -179,7 +221,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         //Cleans earlier relations.
         if ($autoClean === true) {
             $where = array(
-                'post_id' => $document_id
+                    'post_id' => $document_id
             );
             $this->_relation->delete($where);
         }
@@ -205,9 +247,9 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $this->_indexed_relations++;
 
         $data = array(
-            'post_id' => $document_id,
-            'word_id' => $index_id,
-            'location' => $location
+                'post_id' => $document_id,
+                'word_id' => $index_id,
+                'location' => $location
         );
 
         $result = $this->_relation->createRow($data);
@@ -237,17 +279,33 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
 
 
     private function _initCache() {
-        $frontendOptions = array('lifeTime' => 10);
-        $backendOptions = array('cacheDir' => './tmp/');
+        $frontendOpts = array(
+                'caching' => true,
+                'lifetime' => 60 * 30,
+                'automatic_serialization' => true
+        );
 
-        $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
+        $backendOpts = array(
+                'servers' =>array(
+                        array(
+                                'host' => '127.0.0.1',
+                                'port' => 11211
+                        )
+                ),
+                'compression' => false
+        );
 
-        if (!$result = $cache->get('time') ){
-            $time = date('r');
-            echo "generated: " . $time;
-            $cache->save($time, 'time');
-        } else {
-            echo "cache hit: ". $cache->get('time');
-        }
+        $this->_cache = Zend_Cache::factory('Core', 'Memcached', $frontendOpts, $backendOpts);
+        $this->_cache->clean();
+    }
+
+
+    /**
+     * Returns cache backend.
+     *
+     * @return Zend_Cache_Core
+     */
+    public function getCache() {
+        return $this->_cache;
     }
 }

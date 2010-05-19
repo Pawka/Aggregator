@@ -22,8 +22,21 @@ class App_Search_Filter_Stopwords extends App_Search_Filter {
      */
     private $_splitter = null;
 
+    /**
+     * Cache backend
+     *
+     * @var Zend_Cache_Core
+     */
+    protected $_cache = null;
+
+    protected $_cache_key = 'filter_stopwords';
+
 
     public function  __construct($config = array()) {
+
+        if (array_key_exists('cache', $config)) {
+            $this->setCache($config['cache']);
+        }
 
         if (array_key_exists('stopwords', $config)) {
             $this->setStopwords($config['stopwords']);
@@ -32,6 +45,37 @@ class App_Search_Filter_Stopwords extends App_Search_Filter {
         if (array_key_exists('splitter', $config)) {
             $this->setSplitter($config['splitter']);
         }
+    }
+
+    /**
+     * @param Zend_Cache_Core $cache
+     */
+    public function setCache($cache) {
+        $this->_cache = $cache;
+    }
+
+    /**
+     * Adds stopwords to cache
+     */
+    private function _addToCache() {
+        if ($this->_cache !== null) {
+            if (!empty($this->_stopwords)) {
+                foreach ($this->_stopwords as $word) {
+                    $index = $this->_makeTokenKey($word);
+                    $this->_cache->save(1, $index);
+                }
+            }
+        }
+    }
+
+    
+    /**
+     * Makes token key for saving in cache.
+     * @param string $word
+     * @return string
+     */
+    private function _makeTokenKey($word) {
+        return $this->_cache_key . '_' . md5($word);
     }
 
 
@@ -48,6 +92,9 @@ class App_Search_Filter_Stopwords extends App_Search_Filter {
         elseif (is_array($list)) {
             $this->_stopwords = $list;
         }
+
+        $this->_addToCache();
+
         return $this;
     }
 
@@ -167,7 +214,14 @@ class App_Search_Filter_Stopwords extends App_Search_Filter {
      * @return boolean
      */
     public function exists($word) {
-        return (in_array($word, $this->getStopwords()));
+        if ($this->_cache === null) {
+            return (in_array($word, $this->getStopwords()));
+        }
+        else {
+            $index = $this->_makeTokenKey($word);
+            $result = (boolean)$this->_cache->load($index);
+            return $result;
+        }
     }
 }
 ?>

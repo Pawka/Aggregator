@@ -22,18 +22,23 @@ class Indexer extends Application {
     protected function init() {
 
         $config = array(
-            'db_prefix' => '5000',
+            'db_prefix' => '100_stop',
         );
+
+        $this->indexer = new App_Search_Indexer($config);
 
         $xml =  APPLICATION_PATH . '/configs/search.xml';
         $stopwords = new Zend_Config_Xml($xml, 'production');
-        
-        $this->indexer = new App_Search_Indexer($config);
+        $stopwordsFilter = new App_Search_Filter_Stopwords(array(
+            'stopwords' => $stopwords,
+            //'cache' => $this->indexer->getCache(),
+            ));
+
         $this->indexer->setFilter('Lowercase')
             ->setFilter('CleanHTML')
             ->setFilter('WordLength', array('min' => 3),
                     App_Search_Indexer::FILTER_POST)
-            ->setFilter('Stopwords', array('stopwords' => $stopwords),
+            ->setFilter($stopwordsFilter, array(),
                     App_Search_Indexer::FILTER_POST);
 
     }
