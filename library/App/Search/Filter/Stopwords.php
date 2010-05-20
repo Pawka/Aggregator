@@ -92,7 +92,7 @@ class App_Search_Filter_Stopwords extends App_Search_Filter {
         elseif (is_array($list)) {
             $this->_stopwords = $list;
         }
-
+        Zend_Registry::get('logger')->info("Total stopwords: " . count($this->_stopwords));
         $this->_addToCache();
 
         return $this;

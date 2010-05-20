@@ -34,7 +34,7 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
      * If true, uses cache for indexing.
      * @var boolean
      */
-    protected $use_cache = true;
+    protected $enable_cache = false;
 
     /**
      * Cache object
@@ -105,7 +105,9 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $this->_relation = new App_Search_Table_Relations();
         $this->_posts = new App_Search_Table_Posts();
 
-        $this->_initCache();
+        if ($this->enable_cache === true) {
+            $this->_initCache();
+        }
     }
 
 
@@ -167,7 +169,12 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
         $index_id = false;
         $id = 'token_' . md5($token);
 
-        if (!$index_id = $this->_cache->load($id)) {
+        //If cache enabled
+        if ($this->enable_cache === true) {
+            $index_id = $this->_cache->load($id);
+        }
+
+        if (!$index_id) {
             $where = array(
                     'word' => $token
             );
@@ -176,12 +183,11 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
             $select->where('word = ?', $token)->limit(1);
             $result = $this->_index->fetchRow($select);
             if ($result !== null) {
-                $this->_cache->save($result->id, $id, array($this->cache_tag_index));
+                if ($this->enable_cache === true) {
+                    $this->_cache->save($result->id, $id, array($this->cache_tag_index));
+                }
                 $index_id = $result->id;
             }
-        }
-        else {
-            //$this->logger->info("Cached index: '{$token}'");
         }
         return $index_id;
     }

@@ -22,7 +22,8 @@ class Indexer extends Application {
     protected function init() {
 
         $config = array(
-            'db_prefix' => '100_stop',
+            'db_prefix' => 'mi_2500',
+            'enable_cache' => false
         );
 
         $this->indexer = new App_Search_Indexer($config);
