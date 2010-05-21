@@ -29,4 +29,12 @@ class App_Search_Table extends Zend_Db_Table_Abstract {
          $sql = sprintf("TRUNCATE TABLE %s", $this->_name);
          $this->getAdapter()->query($sql, array());
      }
+
+     /**
+      * Returns the name of current model table.
+      * @return string Table name.
+      */
+     public function getTableName() {
+         return $this->_name;
+     }
 }

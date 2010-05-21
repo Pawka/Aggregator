@@ -3,7 +3,7 @@
     <production>
         <stopwords>
             <item>kad</item>
-            <item>šia</item>
+            <item><![CDATA[&lt]]></item>
         </stopwords>
     </production>
 </configdata>

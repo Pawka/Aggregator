@@ -48,6 +48,11 @@ abstract class App_Search_Finder_Abstract extends App_Search_Base {
             $this->setSplitter('Regexp');
         }
 
+        if (array_key_exists('db_prefix', $config)) {
+            $this->setOption('db_prefix', $config['db_prefix']);
+            Zend_Registry::set('db_prefix', $config['db_prefix']);
+        }
+
         if (array_key_exists('db', $config)) {
             $this->_db = $config['db'];
         }
@@ -163,5 +168,11 @@ abstract class App_Search_Finder_Abstract extends App_Search_Base {
         }
         return $content;
     }
+
+    /**
+     * Handles searching process
+     * @param string $query
+     */
+    abstract public function run($query);
 }
 ?>

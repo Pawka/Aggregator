@@ -167,10 +167,10 @@ class App_Search_Indexer extends App_Search_Indexer_Abstract {
     protected function getIndexId($token) {
 
         $index_id = false;
-        $id = 'token_' . md5($token);
 
         //If cache enabled
         if ($this->enable_cache === true) {
+            $id = 'token_' . md5($token);
             $index_id = $this->_cache->load($id);
         }
 
